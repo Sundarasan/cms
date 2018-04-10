@@ -1,0 +1,27 @@
+{
+  "name": "express-sample",
+  "version": "1.0.0",
+  "description": "Sample express application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sundarasan/ec2-sample-express.git"
+  },
+  "keywords": [
+    "sample",
+    "express",
+    "node"
+  ],
+  "author": "Sundarasan Natarajan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sundarasan/ec2-sample-express/issues"
+  },
+  "homepage": "https://github.com/Sundarasan/ec2-sample-express#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
