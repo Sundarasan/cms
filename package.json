@@ -1,5 +1,5 @@
 {
-  "name": "express-sample",
+  "name": "ec2-express-sample",
   "version": "1.0.0",
   "description": "Sample express application",
   "main": "index.js",
