@@ -1,0 +1,3 @@
+{
+  "db": "mongodb://localhost/ec2-sample-express"
+}

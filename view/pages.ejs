@@ -1,0 +1,26 @@
+
+<html>
+
+  <head>
+
+    <title>Pages</title>
+
+  </head>
+
+  <body>
+
+    <h1>Pages</h1>
+
+    <ul>
+      <% pageDocs.forEach((pageDoc, index) => { %>
+        <li><a href="/p/<%= pageDoc.get('label') %>"><%= pageDoc.get('label') %></a></li>
+      <% }) %>
+    </ul>
+
+    <br />
+
+    <a href="/page">Create Page</a>
+
+  </body>
+
+</html>

@@ -1,0 +1,72 @@
+
+<html>
+
+  <head>
+
+    <title>Create Page</title>
+
+  </head>
+
+  <body>
+
+    <h1>Create Page</h1>
+
+    <span id="url-prefix"></span><input id="label" placeholder="url"/>
+
+    <br />
+    <br />
+
+    <h3>Page Content:</h3>
+    <textarea id="content" row="50" style="height: 600px; width: 100%;"></textarea>
+
+    <br />
+    <br />
+
+    <button id="create" style="font-size: 20px;">Create</button>
+
+    <div id="status" style="color: red; display: none;"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+
+      var $labelInput = $('#label')
+      var $contentTextarea = $('#content')
+      var $createButton = $('#create')
+      var $status = $('#status')
+      var $urlPrefix = $('#url-prefix')
+
+      $urlPrefix.text(window.location.origin + '/p/')
+
+      $createButton.on('click', function (event) {
+        createPage().then(function () {
+          window.location.href = '/'
+        }).fail(function () {
+          showStatus('error', 'Failed to create page')
+        })
+      })
+
+      function createPage () {
+        return $.ajax({
+          type: 'post',
+          url: '/api/v1/page',
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify({
+            label: $labelInput.val(),
+            content: $contentTextarea.val()
+          })
+        })
+      }
+
+      function showStatus (type, message) {
+        if (type === 'error') {
+          $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
+        }
+      }
+
+    </script>
+
+  </body>
+
+</html>
