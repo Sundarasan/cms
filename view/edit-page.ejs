@@ -3,29 +3,29 @@
 
   <head>
 
-    <title>Create Page</title>
+    <title><%= pageDoc.get('label') %> - Edit</title>
 
   </head>
 
   <body>
 
-    <h1>Create Page</h1>
+    <h1>Edit - <%= pageDoc.get('label') %></h1>
 
     <div class="url">
       <span id="url-prefix" class="url-prefix"></span>
-      <input id="label" class="label" placeholder="url" value="<%= randomNumber %>"/>
+      <input id="label" class="label" placeholder="url" value="<%= pageDoc.get('label') %>"/>
     </div>
 
     <br />
     <br />
 
     <h3>Page Content:</h3>
-    <textarea id="content"><%= defaultPageContent %></textarea>
+    <textarea id="content"><%= pageDoc.get('content') %></textarea>
 
     <br />
     <br />
 
-    <button id="create" style="font-size: 20px;">Create</button> &nbsp; &nbsp;
+    <button id="save" style="font-size: 20px;">Save</button> &nbsp; &nbsp;
 
     <a href="/pages">back</a>
 
@@ -33,30 +33,30 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-    <script type="text/javascript">
+    <script>
 
       var $labelInput = $('#label')
       var $contentTextarea = $('#content')
       var contentTextareaEl = $contentTextarea.get(0)
-      var $createButton = $('#create')
+      var $saveButton = $('#save')
       var $status = $('#status')
       var $urlPrefix = $('#url-prefix')
       var editor
 
       $urlPrefix.text(window.location.origin + '/p/')
 
-      $createButton.on('click', function (event) {
-        createPage().then(function () {
+      $saveButton.on('click', function (event) {
+        savePage().then(function () {
           window.location.href = '/'
         }).fail(function () {
-          showStatus('error', 'Failed to create page')
+          showStatus('error', 'Failed to save page')
         })
       })
 
-      function createPage () {
+      function savePage () {
         return $.ajax({
-          type: 'post',
-          url: '/api/v1/page',
+          type: 'put',
+          url: '/api/v1/page/<%= pageDoc.get("id") %>',
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',
           data: JSON.stringify({
@@ -102,6 +102,7 @@
       .label {
         font-size: 20px;
         border: none;
+        border-bottom: 1px solid black;
         border-bottom: 1px solid grey;
       }
 

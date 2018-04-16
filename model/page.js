@@ -6,11 +6,13 @@ var PageSchema = new Schema({
     type: String,
     maxlength: 100,
     trim: true,
-    unique: true
+    unique: true,
+    required: true
   },
   content: {
     type: String,
-    trim: true
+    trim: true,
+    required: true
   }
 }, {
   timestamps: true

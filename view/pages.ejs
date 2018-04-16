@@ -5,21 +5,76 @@
 
     <title>Pages</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
   </head>
 
   <body>
 
     <h1>Pages</h1>
 
-    <ul>
+    <a href="/page">Create Page</a>
+
+    <ol class="page-list">
       <% pageDocs.forEach((pageDoc, index) => { %>
-        <li><a href="/p/<%= pageDoc.get('label') %>"><%= pageDoc.get('label') %></a></li>
+        <li>
+          <a href="/p/<%= pageDoc.get('label') %>" target="_blank"><%= pageDoc.get('label') %></a> &nbsp; | &nbsp;
+          <a href="/page/<%= pageDoc.get('label') %>" title="Edit"><i class="material-icons">&#xe254;</i></a> &nbsp; | &nbsp;
+          <a href="javascript:void(0)" class="delete" data-id="<%= pageDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
+          <span id="status-<%= pageDoc.get('id') %>" style="color: red; display: none;"></span>
+        </li>
       <% }) %>
-    </ul>
+    </ol>
 
     <br />
 
-    <a href="/page">Create Page</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+
+      var $delete = $('.delete')
+
+      $delete.on('click', function (event) {
+        var $this = $(event.currentTarget)
+        var id = $this.data('id')
+        deletePage(id).then(function () {
+          window.location.reload()
+        }).fail(function () {
+          showPageStatus('error', id, 'Failed to delete')
+        })
+      })
+
+      function deletePage (id) {
+        return $.ajax({
+          type: 'delete',
+          url: '/api/v1/page/' + id,
+          dataType: 'json'
+        })
+      }
+
+      function showPageStatus (type, id, message) {
+        if (id) {
+          if (type === 'error') {
+            $('#status-' + id).html(message).fadeIn().delay(3 * 1000).fadeOut()
+          }
+        }
+      }
+
+    </script>
+
+    <style>
+      body {
+        font-family: Sans-serif;
+        color: #383636;
+      }
+
+      .page-list li a i {
+        font-size: 22px;
+      }
+
+    </style>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   </body>
 
