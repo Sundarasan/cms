@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Website = require('../../../model/website')
+const Page = require('../../../model/page')
 const mongoose = require('mongoose')
 
 router.post('/website', (req, res) => {
@@ -48,17 +49,27 @@ router.put('/website/:_id', (req, res) => {
 })
 
 router.delete('/website/:_id', (req, res) => {
-  Website.findOneAndRemove({
-    _id: req.params._id
+  const websiteId = req.params._id
+  Page.remove({
+    website: websiteId
   }).then(result => {
-    res.json({
-      status: 'OK',
-      message: 'Website deleted successfully'
+    Website.findOneAndRemove({
+      _id: websiteId
+    }).then(result => {
+      res.json({
+        status: 'OK',
+        message: 'Website deleted successfully'
+      })
+    }).catch(err => {
+      res.status(500).json({
+        type: 'UNKNOWN_ERROR',
+        message: 'Failed to delete website'
+      })
     })
   }).catch(err => {
     res.status(500).json({
       type: 'UNKNOWN_ERROR',
-      message: 'Failed to delete website'
+      message: 'Failed to delete pages under website'
     })
   })
 })
