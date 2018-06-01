@@ -13,7 +13,6 @@ var PageSchema = new Schema({
     type: String,
     maxlength: 100,
     trim: true,
-    unique: true,
     required: true,
     index: true
   },
