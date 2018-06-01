@@ -3,64 +3,67 @@
 
   <head>
 
-    <title><%= pageDoc.get('label') %> - Edit</title>
+    <title>Create Page | <%= websiteDoc.get('subdomain') %></title>
 
   </head>
 
   <body>
 
-    <h1>Edit - <%= pageDoc.get('label') %></h1>
+    <h1>Create Page</h1>
 
     <div class="url">
-      <span id="url-prefix" class="url-prefix"></span>
-      <input id="label" class="label" placeholder="url" value="<%= pageDoc.get('label') %>"/>
+      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url" value="<%= randomPageLabel %>"/>
     </div>
 
     <br />
     <br />
 
     <h3>Page Content:</h3>
-    <textarea id="content"><%= pageDoc.get('content') %></textarea>
+    <textarea id="content"><%= defaultPageContent %></textarea>
 
     <br />
     <br />
 
-    <button id="save" style="font-size: 20px;">Save</button> &nbsp; &nbsp;
+    <button id="create" style="font-size: 20px;">Create</button> &nbsp; &nbsp;
 
-    <a href="/pages">back</a>
+    <a href="/website/<%= websiteDoc.get('subdomain') %>">back</a>
 
     <div id="status" style="color: red; display: none;"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-    <script>
+    <script type="text/javascript">
 
+      var subdomain = '<%= websiteDoc.get("subdomain") %>'
+      var websiteId = '<%= websiteDoc.get("id") %>'
+      var $protocol = $('#url-protocol')
+      var $domain = $('#url-domain')
       var $labelInput = $('#label')
       var $contentTextarea = $('#content')
       var contentTextareaEl = $contentTextarea.get(0)
-      var $saveButton = $('#save')
+      var $createButton = $('#create')
       var $status = $('#status')
-      var $urlPrefix = $('#url-prefix')
       var editor
 
-      $urlPrefix.text(window.location.origin + '/p/')
+      $protocol.text(window.location.protocol + '//')
+      $domain.text('.' + window.location.host)
 
-      $saveButton.on('click', function (event) {
-        savePage().then(function () {
-          window.location.href = '/'
+      $createButton.on('click', function (event) {
+        createPage().then(function () {
+          window.location.href = '/website/<%= websiteDoc.get("subdomain") %>'
         }).fail(function () {
-          showStatus('error', 'Failed to save page')
+          showStatus('error', 'Failed to create page')
         })
       })
 
-      function savePage () {
+      function createPage () {
         return $.ajax({
-          type: 'put',
-          url: '/api/v1/page/<%= pageDoc.get("id") %>',
+          type: 'post',
+          url: '/api/v1/website/' + websiteId + '/page',
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',
           data: JSON.stringify({
-            label: $labelInput.val(),
+            label: $labelInput.val().trim(),
             content: getPageContent()
           })
         })
@@ -95,14 +98,17 @@
         font-size: 20px;
       }
 
-      .url-prefix {
+      .url-protocol, .url-domain, .url-subdomain {
+        color: grey;
+      }
+
+      .grey {
         color: grey;
       }
 
       .label {
         font-size: 20px;
         border: none;
-        border-bottom: 1px solid black;
         border-bottom: 1px solid grey;
       }
 

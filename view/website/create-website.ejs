@@ -1,0 +1,100 @@
+
+<html>
+
+  <head>
+
+    <title>Create Website</title>
+
+  </head>
+
+  <body>
+
+    <h1>Create Website</h1>
+
+    <div class="url">
+      <span id="url-protocol" class="url-protocol"></span><input id="url-subdomain" class="url-subdomain" placeholder="subdomain" value="<%= randomSubdomain %>"/><span id="url-domain" class="url-domain"></span>
+    </div>
+
+    <br />
+    <br />
+
+    <button id="create" style="font-size: 20px;">Create</button> &nbsp; &nbsp;
+
+    <a href="/websites">back</a>
+
+    <div id="status" style="color: red; display: none;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+      var $urlSubdomain = $('#url-subdomain')
+      var $createButton = $('#create')
+      var $domain = $('#url-domain')
+      var $protocol = $('#url-protocol')
+      var $status = $('#status')
+
+      $protocol.text(window.location.protocol + '//')
+      $domain.text('.' + window.location.host)
+
+      $createButton.on('click', function (event) {
+        createWebsite().then(function () {
+          window.location.href = '/websites'
+        }).fail(function () {
+          showStatus('error', 'Failed to create website')
+        })
+      })
+
+      function createWebsite () {
+        return $.ajax({
+          type: 'post',
+          url: '/api/v1/website',
+          dataType: 'json',
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify({
+            subdomain: $urlSubdomain.val().trim()
+          })
+        })
+      }
+
+      function showStatus (type, message) {
+        if (type === 'error') {
+          $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
+        }
+      }
+
+    </script>
+
+    <style>
+
+      body {
+        font-family: Sans-serif;
+        color: #383636;
+      }
+
+      .url {
+        font-size: 20px;
+      }
+
+      .url-domain, .url-protocol {
+        color: grey;
+      }
+
+      .url-subdomain {
+        width: 120px;
+        font-size: 20px;
+        border: none;
+        outline-style:none;
+        border-bottom: 1px solid grey;
+      }
+
+      .url-subdomain:focus {
+        outline-style:none;
+        box-shadow: none;
+      }
+
+    </style>
+
+  </body>
+
+</html>

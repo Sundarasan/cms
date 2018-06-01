@@ -3,60 +3,65 @@
 
   <head>
 
-    <title>Create Page</title>
+    <title><%= pageDoc.get('label') %> - Edit</title>
 
   </head>
 
   <body>
 
-    <h1>Create Page</h1>
+    <h1>Edit Page - <%= pageDoc.get('label') %></h1>
 
     <div class="url">
-      <span id="url-prefix" class="url-prefix"></span>
-      <input id="label" class="label" placeholder="url" value="<%= randomNumber %>"/>
+      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url" value="<%= pageDoc.get('label') %>"/>
     </div>
 
     <br />
     <br />
 
     <h3>Page Content:</h3>
-    <textarea id="content"><%= defaultPageContent %></textarea>
+    <textarea id="content"><%= pageDoc.get('content') %></textarea>
 
     <br />
     <br />
 
-    <button id="create" style="font-size: 20px;">Create</button> &nbsp; &nbsp;
+    <button id="save" style="font-size: 20px;">Save</button> &nbsp; &nbsp;
 
-    <a href="/pages">back</a>
+    <a href="/website/<%= websiteDoc.get('subdomain') %>">back</a>
 
-    <div id="status" style="color: red; display: none;"></div>
+    <div id="status" class="success" style="display: none;"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-    <script type="text/javascript">
+    <script>
 
+      var subdomain = '<%= websiteDoc.get("subdomain") %>'
+      var websiteId = '<%= websiteDoc.get("id") %>'
+      var pageId = '<%= pageDoc.get("id") %>'
+      var $protocol = $('#url-protocol')
+      var $domain = $('#url-domain')
       var $labelInput = $('#label')
       var $contentTextarea = $('#content')
       var contentTextareaEl = $contentTextarea.get(0)
-      var $createButton = $('#create')
+      var $saveButton = $('#save')
       var $status = $('#status')
       var $urlPrefix = $('#url-prefix')
       var editor
 
-      $urlPrefix.text(window.location.origin + '/p/')
+      $protocol.text(window.location.protocol + '//')
+      $domain.text('.' + window.location.host)
 
-      $createButton.on('click', function (event) {
-        createPage().then(function () {
-          window.location.href = '/'
+      $saveButton.on('click', function (event) {
+        savePage().then(function () {
+          showStatus('success', 'Saved')
         }).fail(function () {
-          showStatus('error', 'Failed to create page')
+          showStatus('error', 'Failed to save page')
         })
       })
 
-      function createPage () {
+      function savePage () {
         return $.ajax({
-          type: 'post',
-          url: '/api/v1/page',
+          type: 'put',
+          url: '/api/v1/website/' + websiteId + '/page/' + pageId,
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',
           data: JSON.stringify({
@@ -67,9 +72,16 @@
       }
 
       function showStatus (type, message) {
-        if (type === 'error') {
-          $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
+        $status.removeClass('success error')
+        switch (type) {
+          case 'success':
+            $status.addClass('success')
+            break
+          case 'error':
+            $status.addClass('error')
+            break
         }
+        $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
       }
 
       function getPageContent () {
@@ -95,8 +107,24 @@
         font-size: 20px;
       }
 
-      .url-prefix {
+      .url {
+        font-size: 20px;
+      }
+
+      .url-protocol, .url-domain, .url-subdomain {
         color: grey;
+      }
+
+      .grey {
+        color: grey;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
       }
 
       .label {

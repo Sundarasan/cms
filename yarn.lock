@@ -98,6 +98,10 @@ cookie@0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
+crypto-random@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/crypto-random/-/crypto-random-1.0.3.tgz#c04179d1cd6439f5b51a19997279f24ddb48c208"
+
 debug@2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -378,6 +382,12 @@ resolve-from@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-2.0.0.tgz#9480ab20e94ffa1d9e80a804c7ea147611966b57"
 
+rword@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/rword/-/rword-2.2.0.tgz#e5d5d04ba71ed182ad6c04ebfa74d1fa0847e5fd"
+  dependencies:
+    crypto-random "^1.0.3"
+
 safe-buffer@5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
@@ -436,6 +446,10 @@ sliced@1.0.1:
 statuses@~1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
+
+subdomain@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/subdomain/-/subdomain-1.2.0.tgz#d829abfe12f427a11b5b30b5dd0c052176c84551"
 
 type-is@~1.6.15, type-is@~1.6.16:
   version "1.6.16"

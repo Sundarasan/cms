@@ -3,7 +3,7 @@
 
   <head>
 
-    <title>Pages</title>
+    <title>Websites</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -11,17 +11,17 @@
 
   <body>
 
-    <h1>Pages</h1>
+    <h1>Websites</h1>
 
-    <a href="/page">Create Page</a>
+    <a href="/website">Create Website</a>
 
     <ol class="page-list">
-      <% pageDocs.forEach((pageDoc, index) => { %>
+      <% websiteDocs.forEach((website, index) => { %>
         <li>
-          <a href="/p/<%= pageDoc.get('label') %>" target="_blank"><%= pageDoc.get('label') %></a> &nbsp; | &nbsp;
-          <a href="/page/<%= pageDoc.get('label') %>" title="Edit"><i class="material-icons">&#xe254;</i></a> &nbsp; | &nbsp;
-          <a href="javascript:void(0)" class="delete" data-id="<%= pageDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
-          <span id="status-<%= pageDoc.get('id') %>" style="color: red; display: none;"></span>
+          <a href="/website/<%= website.get('subdomain') %>"><%= website.get('subdomain') %></a> &nbsp; | &nbsp;
+          <a class="website-link" target="_blank" data-subdomain="<%= website.get('subdomain') %>" title="Open"><i class="material-icons">&#xe89e;</i></a> &nbsp; | &nbsp;
+          <a href="javascript:void(0)" class="delete" data-id="<%= website.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
+          <span id="status-<%= website.get('id') %>" style="color: red; display: none;"></span>
         </li>
       <% }) %>
     </ol>
@@ -37,17 +37,17 @@
       $delete.on('click', function (event) {
         var $this = $(event.currentTarget)
         var id = $this.data('id')
-        deletePage(id).then(function () {
+        deleteWebsite(id).then(function () {
           window.location.reload()
         }).fail(function () {
           showPageStatus('error', id, 'Failed to delete')
         })
       })
 
-      function deletePage (id) {
+      function deleteWebsite (id) {
         return $.ajax({
           type: 'delete',
-          url: '/api/v1/page/' + id,
+          url: '/api/v1/website/' + id,
           dataType: 'json'
         })
       }
@@ -58,6 +58,18 @@
             $('#status-' + id).html(message).fadeIn().delay(3 * 1000).fadeOut()
           }
         }
+      }
+
+      var $websiteAnchors = $('.website-link')
+
+      $websiteAnchors.each(function () {
+        var $this = $(this)
+        var subdomain = $this.data('subdomain')
+        $this.attr('href', getWebsiteUrl(subdomain))
+      })
+
+      function getWebsiteUrl (subdomain) {
+        return window.location.protocol + '//' + subdomain + '.' + window.location.host
       }
 
     </script>

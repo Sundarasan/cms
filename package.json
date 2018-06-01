@@ -28,6 +28,8 @@
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.8",
     "express": "^4.16.3",
-    "mongoose": "^5.0.14"
+    "mongoose": "^5.0.14",
+    "rword": "^2.2.0",
+    "subdomain": "^1.2.0"
   }
 }

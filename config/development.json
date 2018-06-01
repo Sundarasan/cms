@@ -1,3 +1,4 @@
 {
+  "host": "localhost:3000",
   "db": "mongodb://localhost/ec2-sample-express"
 }

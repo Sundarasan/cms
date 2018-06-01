@@ -1,29 +1,20 @@
 const express = require('express')
 const router = express.Router()
 const Page = require('../../../model/page')
-const mongoose = require('mongoose')
 
-router.get('/page', (req, res) => {
-  Page.find({}).then(pageDocs => {
-    res.json(pageDocs)
-  }).catch(err => {
-    res.status(500).json({
-      type: 'UNKNOWN_ERROR',
-      message: 'Failed to fetch pages'
-    })
-  })
-})
-
-router.post('/page', (req, res) => {
+router.post('/website/:websiteId/page', (req, res) => {
+  const websiteId = req.params.websiteId
   const page = req.body
   const pageDoc = new Page()
   pageDoc.set({
+    website: websiteId,
     label: page.label,
     content: page.content
   })
   pageDoc.save().then(pageDoc => {
     res.json(pageDoc)
   }).catch(err => {
+    console.error('[ERROR]: Failed to create page. Error:', err)
     res.status(500).json({
       type: 'UNKNOWN_ERROR',
       message: 'Failed to create page'
@@ -31,10 +22,15 @@ router.post('/page', (req, res) => {
   })
 })
 
-router.put('/page/:_id', (req, res) => {
+router.put('/website/:websiteId/page/:pageId', (req, res) => {
+  const websiteId = req.params.websiteId
+  const pageId = req.params.pageId
   const page = req.body
   const pageDoc = new Page()
-  return Page.findById(req.params._id).then(pageDoc => {
+  return Page.findOne({
+    _id: pageId,
+    website: websiteId
+  }).then(pageDoc => {
     if (!pageDoc) {
       res.status(404).json({
         type: 'NOT_FOUND',
@@ -60,11 +56,12 @@ router.put('/page/:_id', (req, res) => {
   })
 })
 
-router.delete('/page/:_id', (req, res) => {
-  const page = req.body
-  const pageDoc = new Page()
+router.delete('/website/:websiteId/page/:pageId', (req, res) => {
+  const websiteId = req.params.websiteId
+  const pageId = req.params.pageId
   Page.findOneAndRemove({
-    _id: req.params._id
+    _id: pageId,
+    website: websiteId
   }).then(result => {
     res.json({
       status: 'OK',
@@ -73,7 +70,7 @@ router.delete('/page/:_id', (req, res) => {
   }).catch(err => {
     res.status(500).json({
       type: 'UNKNOWN_ERROR',
-      message: 'Failed to save page'
+      message: 'Failed to delete page'
     })
   })
 })
