@@ -7,6 +7,7 @@ const Page = require('../../model/page')
 router.get('/subdomain/:subdomain/*', (req, res) => {
   const subdomain = req.params.subdomain
   let path = req.originalUrl || ''
+  path = decodeURI(path)
   if (path[0] === '/') {
     path = path.substring(1)
   }
