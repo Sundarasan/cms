@@ -6,7 +6,9 @@ const _ = require('lodash')
 const rword = require('rword')
 
 router.get('/websites', (req, res) => {
-  Website.find({}).then(websiteDocs => {
+  Website.find({}).sort({
+    createdAt: -1
+  }).then(websiteDocs => {
     res.render('website/websites', {
       websiteDocs
     })
@@ -37,6 +39,8 @@ router.get('/website/:subdomain', (req, res) => {
     } else {
       Page.find({
         website: websiteDoc.get('id')
+      }).sort({
+        createdAt: -1
       }).then(pageDocs => {
         res.render('website/edit-website', {
           websiteDoc,

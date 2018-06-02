@@ -45,6 +45,8 @@ router.get('/website/:subdomain/page/:pageLabel', (req, res) => {
       Page.findOne({
         website: websiteDoc.get('id'),
         label: pageLabel
+      }).sort({
+        createdAt: -1
       }).then(pageDoc => {
         if (!pageDoc) {
           res.status(404).json({
