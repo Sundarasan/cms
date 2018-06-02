@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-
-var PageSchema = new Schema({
+var SnippetSchema = new Schema({
   website: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Website',
@@ -25,13 +24,13 @@ var PageSchema = new Schema({
   timestamps: true
 })
 
-PageSchema.index({
+SnippetSchema.index({
   website: 1,
   label: 1
 }, {
   unique: 'Page already exists'
 })
 
-const PageModel = mongoose.model('Page', PageSchema)
+const SnippetModel = mongoose.model('Snippet', SnippetSchema)
 
-module.exports = PageModel
+module.exports = SnippetModel

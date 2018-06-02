@@ -23,7 +23,7 @@ router.post('/website', (req, res) => {
 router.put('/website/:_id', (req, res) => {
   const website = req.body
   const websiteDoc = new Website()
-  return Website.findById(req.params._id).then(websiteDoc => {
+  Website.findById(req.params._id).then(websiteDoc => {
     if (!websiteDoc) {
       res.status(404).json({
         type: 'NOT_FOUND',
@@ -31,7 +31,7 @@ router.put('/website/:_id', (req, res) => {
       })
     } else {
       websiteDoc.set('subdomain', website.subdomain)
-      return websiteDoc.save().then(websiteDoc => {
+      websiteDoc.save().then(websiteDoc => {
         res.json(websiteDoc)
       }).catch(err => {
         res.status(500).json({
@@ -41,7 +41,7 @@ router.put('/website/:_id', (req, res) => {
       })
     }
   }).catch(err => {
-    res.status(500).json({
+    return res.status(500).json({
       type: 'UNKNOWN_ERROR',
       message: 'Failed to find website'
     })
