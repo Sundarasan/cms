@@ -13,7 +13,8 @@ var WebsiteSchema = new Schema({
     required: true,
     trim: true,
     unique: true,
-    index: true
+    index: true,
+    lowercase: true
   }
 }, {
   timestamps: true
