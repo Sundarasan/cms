@@ -3,23 +3,21 @@
 
   <head>
 
-    <title><%= pageDoc.get('label') %> - Edit Page</title>
+    <title>Create Snippet</title>
 
   </head>
 
   <body>
 
-    <h1>Edit Page - <%= pageDoc.get('label') %></h1>
+    <h1>Create Snippet</h1>
 
-    <div class="url">
-      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url..." value="<%= pageDoc.get('label') %>"/>
-    </div>
+    <input id="label" class="label" placeholder="Snippet name..."/>
 
     <br />
     <br />
 
-    <h3>Page Content:</h3>
-    <textarea id="content"><%= pageDoc.get('content') %></textarea>
+    <h3>Snippet Content:</h3>
+    <textarea id="content"></textarea>
 
     <br />
     <br />
@@ -36,36 +34,29 @@
 
       var subdomain = '<%= websiteDoc.get("subdomain") %>'
       var websiteId = '<%= websiteDoc.get("id") %>'
-      var pageId = '<%= pageDoc.get("id") %>'
-      var $protocol = $('#url-protocol')
-      var $domain = $('#url-domain')
       var $labelInput = $('#label')
       var $contentTextarea = $('#content')
       var contentTextareaEl = $contentTextarea.get(0)
       var $saveButton = $('#save')
       var $status = $('#status')
-      var $urlPrefix = $('#url-prefix')
       var editor
 
-      $protocol.text(window.location.protocol + '//')
-      $domain.text('.' + window.location.host)
-
       $saveButton.on('click', function (event) {
-        savePage().then(function () {
-          showStatus('success', 'Saved')
+        saveSnippet().then(function () {
+          window.location.href = '/website/' + subdomain
         }).fail(function () {
-          showStatus('error', 'Failed to save page')
+          showStatus('error', 'Failed to save snippet')
         })
       })
 
-      function savePage () {
+      function saveSnippet () {
         return $.ajax({
-          type: 'put',
-          url: '/api/v1/website/' + websiteId + '/page/' + pageId,
+          type: 'post',
+          url: '/api/v1/website/' + websiteId + '/snippet',
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',
           data: JSON.stringify({
-            label: $labelInput.val(),
+            label: $labelInput.val().trim(),
             content: getPageContent()
           })
         })
@@ -87,9 +78,9 @@
       function getPageContent () {
         var val = ''
         if (editor) {
-          val = editor.getValue()
+          val = editor.getValue().trim()
         } else {
-          val = $contentTextarea.val()
+          val = $contentTextarea.val().trim()
         }
         return val
       }
@@ -101,22 +92,6 @@
       body {
         font-family: Sans-serif;
         color: #383636;
-      }
-
-      .url {
-        font-size: 20px;
-      }
-
-      .url {
-        font-size: 20px;
-      }
-
-      .url-protocol, .url-domain, .url-subdomain {
-        color: grey;
-      }
-
-      .grey {
-        color: grey;
       }
 
       .success {

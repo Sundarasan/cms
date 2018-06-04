@@ -3,7 +3,7 @@
 
   <head>
 
-    <title><%= websiteDoc.get('subdomain') %> - Edit</title>
+    <title><%= websiteDoc.get('subdomain') %> - Edit Website</title>
 
   </head>
 
@@ -25,20 +25,41 @@
     <br />
     <br />
 
-    <h1>Pages:</h1>
+    <div style="width: 100%;">
+      <div style="float:left; width: 50%">
+        <h1>Pages:</h1>
 
-    <a class="create-page-link">Create Page</a>
+        <a class="create-page-link">Create Page</a>
 
-    <ol class="page-list">
-      <% pageDocs.forEach((pageDoc, index) => { %>
-        <li class="page-item" data-page-label="<%= pageDoc.get('label') %>">
-          <a class="edit-page-link" title="Edit"><%= pageDoc.get('label') %></a> &nbsp; | &nbsp;
-          <a class="open-link" target="_blank" title="Open"><i class="material-icons">&#xe89e;</i></a> &nbsp; | &nbsp;
-          <a href="javascript:void(0)" class="delete" data-id="<%= pageDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
-          <span id="status-<%= pageDoc.get('id') %>" style="color: red; display: none;"></span>
-        </li>
-      <% }) %>
-    </ol>
+        <ol class="page-list">
+          <% pageDocs.forEach((pageDoc, index) => { %>
+            <li class="page-item" data-page-label="<%= pageDoc.get('label') %>">
+              <a class="edit-page-link" title="Edit"><%= pageDoc.get('label') %></a> &nbsp; | &nbsp;
+              <a class="open-link" target="_blank" title="Open"><i class="material-icons">&#xe89e;</i></a> &nbsp; | &nbsp;
+              <a href="javascript:void(0)" class="delete-page" data-id="<%= pageDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
+              <span id="status-<%= pageDoc.get('id') %>" style="color: red; display: none;"></span>
+            </li>
+          <% }) %>
+        </ol>
+      </div>
+      <div style="float:right; width: 50%">
+        <h1>Snippets:</h1>
+
+        <a class="create-snippet-link">Create Snippet</a>
+
+        <ol class="snippet-list">
+          <% snippetDocs.forEach((snippetDoc, index) => { %>
+            <li class="snippet-item" data-snippet-label="<%= snippetDoc.get('label') %>">
+              <a class="edit-snippet-link" href="/website/<%= websiteDoc.get('subdomain') %>/snippet/<%= snippetDoc.get('label') %>" title="Edit"><%= snippetDoc.get('label') %></a> &nbsp; | &nbsp;
+              <a href="javascript:void(0)" class="delete-snippet" data-id="<%= snippetDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
+              <span id="status-<%= snippetDoc.get('id') %>" style="color: red; display: none;"></span>
+            </li>
+          <% }) %>
+        </ol>
+
+      </div>
+    </div>
+    <div style="clear:both"></div>
 
     <a href="/websites">back</a>
 
@@ -47,19 +68,24 @@
     <script>
 
       var subdomain = '<%= websiteDoc.get("subdomain") %>'
+      var websiteId = '<%= websiteDoc.get("id") %>'
       var $subdomain = $('#url-subdomain')
       var $protocol = $('#url-protocol')
       var $domain = $('#url-domain')
       var $saveButton = $('#save')
       var $status = $('#status')
       var $urlPrefix = $('#url-prefix')
-      var $delete = $('.delete')
+      var $deletePage = $('.delete-page')
       var $pageItem = $('.page-item')
       var $createPageLink = $('.create-page-link')
+      var $createSnippetLink = $('.create-snippet-link')
+      var $editSnippetLink = $('.edit-snippet-link')
+      var $deleteSnippet = $('.delete-snippet')
 
       $protocol.text(window.location.protocol + '//')
       $domain.text('.' + window.location.host)
       $createPageLink.attr('href', getCreatePageLink(subdomain))
+      $createSnippetLink.attr('href', getCreateSnippetLink(subdomain))
 
       $saveButton.on('click', function (event) {
         saveWebsite().then(function () {
@@ -72,7 +98,7 @@
       function saveWebsite () {
         return $.ajax({
           type: 'put',
-          url: '/api/v1/website/<%= websiteDoc.get("id") %>',
+          url: '/api/v1/website/' + websiteId,
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',
           data: JSON.stringify({
@@ -87,7 +113,7 @@
         }
       }
 
-      $delete.on('click', function (event) {
+      $deletePage.on('click', function (event) {
         var $this = $(event.currentTarget)
         var id = $this.data('id')
         deletePage(id).then(function () {
@@ -100,7 +126,7 @@
       function deletePage (id) {
         return $.ajax({
           type: 'delete',
-          url: '/api/v1/website/<%= websiteDoc.get("id") %>/page/' + id,
+          url: '/api/v1/website/' + websiteId + '/page/' + id,
           dataType: 'json'
         })
       }
@@ -120,8 +146,30 @@
         $this.find('.open-link').attr('href', getWebPageLink(subdomain, pageLabel))
       })
 
+      $deleteSnippet.on('click', function (event) {
+        var $this = $(event.currentTarget)
+        var id = $this.data('id')
+        deleteSnippet(id).then(function () {
+          window.location.reload()
+        }).fail(function () {
+          showPageStatus('error', id, 'Failed to delete')
+        })
+      })
+
+      function deleteSnippet (id) {
+        return $.ajax({
+          type: 'delete',
+          url: '/api/v1/website/' + websiteId + '/snippet/' + id,
+          dataType: 'json'
+        })
+      }
+
       function getCreatePageLink (subdomain) {
         return '/website/' + subdomain + '/page'
+      }
+
+      function getCreateSnippetLink (subdomain) {
+        return '/website/' + subdomain + '/snippet'
       }
 
       function getEditPageLink (subdomain, pageLabel) {
@@ -166,7 +214,7 @@
         box-shadow: none;
       }
 
-      .page-list li a i {
+      .page-list li a i, .snippet-list li a i {
         font-size: 22px;
       }
 

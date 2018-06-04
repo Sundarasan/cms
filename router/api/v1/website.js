@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('lodash')
 const router = express.Router()
 const Website = require('../../../model/website')
 const Page = require('../../../model/page')
@@ -8,7 +9,7 @@ router.post('/website', (req, res) => {
   const website = req.body
   const websiteDoc = new Website()
   websiteDoc.set({
-    subdomain: website.subdomain
+    subdomain: _.trim(website.subdomain)
   })
   websiteDoc.save().then(websiteDoc => {
     res.json(websiteDoc)
@@ -20,17 +21,16 @@ router.post('/website', (req, res) => {
   })
 })
 
-router.put('/website/:_id', (req, res) => {
+router.put('/website/:websiteId', (req, res) => {
   const website = req.body
-  const websiteDoc = new Website()
-  Website.findById(req.params._id).then(websiteDoc => {
+  Website.findById(req.params.websiteId).then(websiteDoc => {
     if (!websiteDoc) {
       res.status(404).json({
         type: 'NOT_FOUND',
         message: 'Website not found to update'
       })
     } else {
-      websiteDoc.set('subdomain', website.subdomain)
+      websiteDoc.set('subdomain', _.trim(website.subdomain))
       websiteDoc.save().then(websiteDoc => {
         res.json(websiteDoc)
       }).catch(err => {
@@ -48,8 +48,8 @@ router.put('/website/:_id', (req, res) => {
   })
 })
 
-router.delete('/website/:_id', (req, res) => {
-  const websiteId = req.params._id
+router.delete('/website/:websiteId', (req, res) => {
+  const websiteId = req.params.websiteId
   Page.remove({
     website: websiteId
   }).then(result => {

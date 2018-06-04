@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('lodash')
 const router = express.Router()
 const Website = require('../../../model/website')
 const Page = require('../../../model/page')
@@ -7,19 +8,34 @@ const compilePageHelper = require('../../../helper/compile-page')
 router.post('/website/:websiteId/page', (req, res) => {
   const websiteId = req.params.websiteId
   const page = req.body
-  const pageDoc = new Page()
-  pageDoc.set({
-    website: websiteId,
-    label: page.label,
-    content: page.content
-  })
-  pageDoc.save().then(pageDoc => {
-    res.json(pageDoc)
+  Website.findById(websiteId).then(websiteDoc => {
+    if (!websiteDoc) {
+      res.status(404).json({
+        type: 'NOT_FOUND',
+        message: 'Website not found'
+      })
+    } else {
+      const pageDoc = new Page()
+      pageDoc.set({
+        website: websiteDoc.get('id'),
+        label: _.trim(page.label),
+        content: _.trim(page.content)
+      })
+      pageDoc.save().then(pageDoc => {
+        res.json(pageDoc)
+      }).catch(err => {
+        console.error('[ERROR]: Failed to create page. Error:', err)
+        res.status(500).json({
+          type: 'UNKNOWN_ERROR',
+          message: 'Failed to create page'
+        })
+      })
+    }
   }).catch(err => {
-    console.error('[ERROR]: Failed to create page. Error:', err)
+    console.error('[ERROR]: Failed to fetch website. Error:', err)
     res.status(500).json({
       type: 'UNKNOWN_ERROR',
-      message: 'Failed to create page'
+      message: 'Failed to fetch website'
     })
   })
 })
@@ -46,8 +62,8 @@ router.put('/website/:websiteId/page/:pageId', (req, res) => {
             message: 'Page not found'
           })
         } else {
-          pageDoc.set('label', page.label)
-          pageDoc.set('content', page.content)
+          pageDoc.set('label', _.trim(page.label))
+          pageDoc.set('content', _.trim(page.content))
           pageDoc.save().then(pageDoc => {
             // Defers compile page task
             compilePageHelper.compilePage(websiteDoc, pageDoc).then(() => {

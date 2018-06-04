@@ -12,10 +12,12 @@ const db = require('./helper/db')
 const indexPageRouter = require('./router/page/index')
 const websitePageRouter = require('./router/page/website')
 const pagePageRouter = require('./router/page/page')
+const snippetPageRouter = require('./router/page/snippet')
 const servePageRouter = require('./router/page/serve')
 
 const websiteRouterV1 = require('./router/api/v1/website')
 const pageRouterV1 = require('./router/api/v1/page')
+const snippetRouterV1 = require('./router/api/v1/snippet')
 
 db.connect()
 
@@ -35,9 +37,11 @@ app.use(subdomain({ base: config.get('host'), removeWWW: true }))
 app.use('/', indexPageRouter)
 app.use('/', websitePageRouter)
 app.use('/', pagePageRouter)
+app.use('/', snippetPageRouter)
 app.use('/', servePageRouter)
 
 app.use('/api/v1', websiteRouterV1)
 app.use('/api/v1', pageRouterV1)
+app.use('/api/v1', snippetRouterV1)
 
 module.exports = app

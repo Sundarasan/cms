@@ -1,7 +1,9 @@
+const Promise = require('bluebird')
 const express = require('express')
 const router = express.Router()
 const Website = require('../../model/website')
 const Page = require('../../model/page')
+const Snippet = require('../../model/snippet')
 const _ = require('lodash')
 const rword = require('rword')
 
@@ -37,23 +39,35 @@ router.get('/website/:subdomain', (req, res) => {
         message: 'Website not found'
       })
     } else {
-      Page.find({
+      const promiseArray = []
+      promiseArray.push(Page.find({
         website: websiteDoc.get('id')
       }).sort({
         createdAt: -1
-      }).then(pageDocs => {
+      }))
+      promiseArray.push(Snippet.find({
+        website: websiteDoc.get('id')
+      }).sort({
+        createdAt: -1
+      }))
+      Promise.all(promiseArray).then(results => {
+        const pageDocs = results[0]
+        const snippetDocs = results[1]
         res.render('website/edit-website', {
           websiteDoc,
-          pageDocs
+          pageDocs,
+          snippetDocs
         })
       }).catch(err => {
+        console.error('[ERROR]: Failed to fetch details. Error:', err)
         res.status(500).json({
           type: 'UNKNOWN_ERROR',
-          message: 'Failed to fech pages'
+          message: 'Failed to fech details'
         })    
       })
     }
   }).catch(err => {
+    console.error('[ERROR]: Failed to fetch website. Error:', err)
     res.status(500).json({
       type: 'UNKNOWN_ERROR',
       message: 'Failed to fech website'

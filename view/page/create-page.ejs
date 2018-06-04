@@ -12,7 +12,7 @@
     <h1>Create Page</h1>
 
     <div class="url">
-      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url" value="<%= randomPageLabel %>"/>
+      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url..." value="<%= randomPageLabel %>"/>
     </div>
 
     <br />
@@ -78,9 +78,9 @@
       function getPageContent () {
         var val = ''
         if (editor) {
-          val = editor.getValue()
+          val = editor.getValue().trim()
         } else {
-          val = $contentTextarea.val()
+          val = $contentTextarea.val().trim()
         }
         return val
       }
