@@ -6,7 +6,14 @@ const Page = require('../model/page')
 const compilePageHelper = require('../helper/compile-page')
 
 const createPage = (websiteId, page) => {
-  return Website.findById(websiteId).then(websiteDoc => {
+  return Website.findById(websiteId).catch(err => {
+    console.error('[ERROR]: Failed to fetch website. Error:', err)
+    return Promise.reject(new HttpError(
+      500,
+      'UNKNOWN_ERROR',
+      'Failed to fetch website'
+    ))
+  }).then(websiteDoc => {
     if (!websiteDoc) {
       return Promise.reject(new HttpError(
         404,
@@ -29,19 +36,19 @@ const createPage = (websiteId, page) => {
         ))
       })
     }
-  }).catch(err => {
+  })
+}
+
+const updatePage = (websiteId, pageId, page) => {
+  const pageDoc = new Page()
+  return Website.findById(websiteId).catch(err => {
     console.error('[ERROR]: Failed to fetch website. Error:', err)
     return Promise.reject(new HttpError(
       500,
       'UNKNOWN_ERROR',
       'Failed to fetch website'
     ))
-  })
-}
-
-const editPage = (websiteId, pageId, page) => {
-  const pageDoc = new Page()
-  return Website.findById(websiteId).then(websiteDoc => {
+  }).then(websiteDoc => {
     if (!websiteDoc) {
       return Promise.reject(new HttpError(
         404,
@@ -52,6 +59,13 @@ const editPage = (websiteId, pageId, page) => {
       return Page.findOne({
         _id: pageId,
         website: websiteDoc.get('id')
+      }).catch(err => {
+        console.error('[ERROR]: Failed to fetch page. Error:', err)
+        return Promise.reject(new HttpError(
+          500,
+          'UNKNOWN_ERROR',
+          'Failed to fetch page'
+        ))
       }).then(pageDoc => {
         if (!pageDoc) {
           return Promise.reject(new HttpError(
@@ -62,7 +76,14 @@ const editPage = (websiteId, pageId, page) => {
         } else {
           pageDoc.set('label', _.trim(page.label))
           pageDoc.set('content', _.trim(page.content))
-          return pageDoc.save().then(pageDoc => {
+          return pageDoc.save().catch(err => {
+            console.error('[ERROR]: Failed to update page. Error:', err)
+            return Promise.reject(new HttpError(
+              500,
+              'UNKNOWN_ERROR',
+              'Failed to save page'
+            ))
+          }).then(pageDoc => {
             // Defers compile page task
             compilePageHelper.compilePage(websiteDoc, pageDoc).then(() => {
               console.log(`Compiled page and stored successfully. Subdomain: ${websiteDoc.get('subdomain')} | Page: ${pageDoc.get('label')}`)
@@ -70,31 +91,10 @@ const editPage = (websiteId, pageId, page) => {
               console.error('[ERROR]: Failed to compile given content. Error:', err)
             })
             return Promise.resolve(pageDoc)
-          }).catch(err => {
-            console.error('[ERROR]: Failed to update page. Error:', err)
-            return Promise.reject(new HttpError(
-              500,
-              'UNKNOWN_ERROR',
-              'Failed to save page'
-            ))
           })
         }
-      }).catch(err => {
-        console.error('[ERROR]: Failed to fetch page. Error:', err)
-        return Promise.reject(new HttpError(
-          500,
-          'UNKNOWN_ERROR',
-          'Failed to fetch page'
-        ))
       })
     }
-  }).catch(err => {
-    console.error('[ERROR]: Failed to fetch website. Error:', err)
-    return Promise.reject(new HttpError(
-      500,
-      'UNKNOWN_ERROR',
-      'Failed to fetch website'
-    ))
   })
 }
 
@@ -113,6 +113,6 @@ const deletePage = (websiteId, pageId) => {
 
 module.exports = {
   createPage,
-  editPage,
+  updatePage,
   deletePage
 }

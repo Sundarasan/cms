@@ -17,7 +17,7 @@ router.put('/website/:websiteId/page/:pageId', (req, res) => {
   const websiteId = req.params.websiteId
   const pageId = req.params.pageId
   const page = req.body
-  pageService.editPage(websiteId, pageId, page).then(pageDoc => {
+  pageService.updatePage(websiteId, pageId, page).then(pageDoc => {
     res.json(pageDoc)
   }).catch(httpErr => {
     res.status(httpErr.statusCode).json(httpErr)
