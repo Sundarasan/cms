@@ -11,7 +11,7 @@
 
     <h1>Edit Page - <%= snippetDoc.get('label') %></h1>
 
-    <input id="label" class="label" placeholder="Snippet name..." value="<%= snippetDoc.get('label') %>"/>
+    <input id="label" class="label" placeholder="Snippet name..." value="<%= snippetDoc.get('label') %>" <%= snippetDoc.get('isEditable') ? '' : 'disabled' %>/>
 
     <br />
     <br />
@@ -22,70 +22,74 @@
     <br />
     <br />
 
-    <button id="save" style="font-size: 20px;">Save</button> &nbsp; &nbsp;
+    <% if (snippetDoc.get('isEditable')) { %>
+      <button id="save" style="font-size: 20px;">Save</button> &nbsp; &nbsp;
 
-    <a href="/website/<%= websiteDoc.get('subdomain') %>">back</a>
+      <a href="/website/<%= websiteDoc.get('subdomain') %>">back</a>
 
-    <div id="status" class="success" style="display: none;"></div>
+      <div id="status" class="success" style="display: none;"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-    <script>
+      <script>
 
-      var websiteId = '<%= websiteDoc.get("id") %>'
-      var snippetId = '<%= snippetDoc.get("id") %>'
-      var $labelInput = $('#label')
-      var $contentTextarea = $('#content')
-      var contentTextareaEl = $contentTextarea.get(0)
-      var $saveButton = $('#save')
-      var $status = $('#status')
-      var editor
+        var websiteId = '<%= websiteDoc.get("id") %>'
+        var snippetId = '<%= snippetDoc.get("id") %>'
+        var $labelInput = $('#label')
+        var $contentTextarea = $('#content')
+        var contentTextareaEl = $contentTextarea.get(0)
+        var $saveButton = $('#save')
+        var $status = $('#status')
+        var editor
 
-      $saveButton.on('click', function (event) {
-        saveSnippet().then(function () {
-          showStatus('success', 'Saved')
-        }).fail(function () {
-          showStatus('error', 'Failed to save snippet')
-        })
-      })
-
-      function saveSnippet () {
-        return $.ajax({
-          type: 'put',
-          url: '/api/v1/website/' + websiteId + '/snippet/' + snippetId,
-          dataType: 'json',
-          contentType: 'application/json; charset=utf-8',
-          data: JSON.stringify({
-            label: $labelInput.val(),
-            content: getPageContent()
+        $saveButton.on('click', function (event) {
+          saveSnippet().then(function () {
+            showStatus('success', 'Saved')
+          }).fail(function () {
+            showStatus('error', 'Failed to save snippet')
           })
         })
-      }
 
-      function showStatus (type, message) {
-        $status.removeClass('success error')
-        switch (type) {
-          case 'success':
-            $status.addClass('success')
-            break
-          case 'error':
-            $status.addClass('error')
-            break
+        function saveSnippet () {
+          return $.ajax({
+            type: 'put',
+            url: '/api/v1/website/' + websiteId + '/snippet/' + snippetId,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+              label: $labelInput.val(),
+              content: getPageContent()
+            })
+          })
         }
-        $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
-      }
 
-      function getPageContent () {
-        var val = ''
-        if (editor) {
-          val = editor.getValue()
-        } else {
-          val = $contentTextarea.val()
+        function showStatus (type, message) {
+          $status.removeClass('success error')
+          switch (type) {
+            case 'success':
+              $status.addClass('success')
+              break
+            case 'error':
+              $status.addClass('error')
+              break
+          }
+          $status.html(message).fadeIn().delay(3 * 1000).fadeOut()
         }
-        return val
-      }
 
-    </script>
+        function getPageContent () {
+          var val = ''
+          if (editor) {
+            val = editor.getValue()
+          } else {
+            val = $contentTextarea.val()
+          }
+          return val
+        }
+
+      </script>
+    <% } else { %>
+      <a href="/website/<%= websiteDoc.get('subdomain') %>">back</a>
+    <% } %>
 
     <style>
 
@@ -127,15 +131,17 @@
     <script src=""></script>
     <script type="text/javascript">
       try {
-        editor = CodeMirror.fromTextArea(contentTextareaEl, {
+        var contentTextareaElem = document.getElementById('content')
+        editor = CodeMirror.fromTextArea(contentTextareaElem, {
           lineNumbers: true,
           mode: 'application/x-ejs',
           indentUnit: 2,
-          indentWithTabs: true
+          indentWithTabs: true,
+          readOnly: <%= snippetDoc.get('isEditable') ? 'false' : 'true' %>
         })
         editor.setSize(undefined, 550)
       } catch (error) {
-        console.error('Couldnot initialize code editor. Error:', err)
+        console.error('Couldnot initialize code editor. Error:', error)
       }
     </script>
 
