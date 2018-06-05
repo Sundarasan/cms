@@ -12,7 +12,10 @@
     <h1>Edit Website - <%= websiteDoc.get('subdomain') %></h1>
 
     <div class="url">
-      <span id="url-protocol" class="url-protocol"></span><input id="url-subdomain" class="url-subdomain" placeholder="subdomain" value="<%= websiteDoc.get('subdomain') %>"/><span id="url-domain" class="url-domain"></span>
+      <span id="url-protocol" class="url-protocol"></span><input id="url-subdomain" class="url-subdomain" placeholder="subdomain" value="<%= websiteDoc.get('subdomain') %>"/><span id="url-domain" class="url-domain"></span> &nbsp; | &nbsp;
+      <a id="open-website-link" title="Open Website" target="_blank">
+        <i class="material-icons">&#xe89e;</i>
+      </a>
     </div>
 
     <br />
@@ -51,7 +54,7 @@
           <% snippetDocs.forEach((snippetDoc, index) => { %>
             <li class="snippet-item" data-snippet-label="<%= snippetDoc.get('label') %>">
               <a class="edit-snippet-link" href="/website/<%= websiteDoc.get('subdomain') %>/snippet/<%= snippetDoc.get('label') %>" title="Edit"><%= snippetDoc.get('label') %></a> &nbsp; | &nbsp;
-              <a href="javascript:void(0)" class="delete-snippet" data-id="<%= snippetDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a> 
+              <a href="javascript:void(0)" class="delete-snippet" data-id="<%= snippetDoc.get('id') %>" title="Delete"><i class="material-icons">&#xE872;</i></a>
               <span id="status-<%= snippetDoc.get('id') %>" style="color: red; display: none;"></span>
             </li>
           <% }) %>
@@ -81,15 +84,17 @@
       var $createSnippetLink = $('.create-snippet-link')
       var $editSnippetLink = $('.edit-snippet-link')
       var $deleteSnippet = $('.delete-snippet')
+      var $openWebsiteLink = $('#open-website-link')
 
       $protocol.text(window.location.protocol + '//')
       $domain.text('.' + window.location.host)
       $createPageLink.attr('href', getCreatePageLink(subdomain))
       $createSnippetLink.attr('href', getCreateSnippetLink(subdomain))
+      $openWebsiteLink.attr('href', getWebsiteUrl(subdomain))
 
       $saveButton.on('click', function (event) {
-        saveWebsite().then(function () {
-          window.location.href = '/websites'
+        saveWebsite().then(function (websiteObj) {
+          window.location.href = getEditWebsiteLink(websiteObj.subdomain)
         }).fail(function () {
           showStatus('error', 'Failed to save website')
         })
@@ -162,6 +167,10 @@
           url: '/api/v1/website/' + websiteId + '/snippet/' + id,
           dataType: 'json'
         })
+      }
+
+      function getEditWebsiteLink (subdomain) {
+        return '/website/' + subdomain
       }
 
       function getCreatePageLink (subdomain) {

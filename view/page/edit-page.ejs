@@ -12,7 +12,10 @@
     <h1>Edit Page - <%= pageDoc.get('label') %></h1>
 
     <div class="url">
-      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url..." value="<%= pageDoc.get('label') %>"/>
+      <span id="url-protocol" class="url-protocol"></span><span class="url-subdomain"><%= websiteDoc.get('subdomain') %></span><span id="url-domain" class="url-domain"></span><span class="grey">/</span><input id="label" class="label" placeholder="url..." value="<%= pageDoc.get('label') %>"/> &nbsp; | &nbsp;
+      <a id="open-page-link" title="Open Page" target="_blank">
+        <i class="material-icons">&#xe89e;</i>
+      </a>
     </div>
 
     <br />
@@ -37,6 +40,7 @@
       var subdomain = '<%= websiteDoc.get("subdomain") %>'
       var websiteId = '<%= websiteDoc.get("id") %>'
       var pageId = '<%= pageDoc.get("id") %>'
+      var pageLabel = '<%= pageDoc.get("label") %>'
       var $protocol = $('#url-protocol')
       var $domain = $('#url-domain')
       var $labelInput = $('#label')
@@ -45,10 +49,12 @@
       var $saveButton = $('#save')
       var $status = $('#status')
       var $urlPrefix = $('#url-prefix')
+      var $openPageLink = $('#open-page-link')
       var editor
 
       $protocol.text(window.location.protocol + '//')
       $domain.text('.' + window.location.host)
+      $openPageLink.attr('href', getWebPageLink(subdomain, pageLabel))
 
       $saveButton.on('click', function (event) {
         savePage().then(function () {
@@ -92,6 +98,14 @@
           val = $contentTextarea.val()
         }
         return val
+      }
+
+      function getWebPageLink (subdomain, pageLabel) {
+        return getWebsiteUrl(subdomain) + '/' + pageLabel
+      }
+
+      function getWebsiteUrl (subdomain) {
+        return window.location.protocol + '//' + subdomain + '.' + window.location.host
       }
 
     </script>
@@ -163,6 +177,8 @@
         console.error('Couldnot initialize code editor. Error:', err)
       }
     </script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   </body>
 

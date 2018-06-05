@@ -120,32 +120,49 @@ const updatePage = (websiteId, pageId, page) => {
 }
 
 const deletePage = (websiteId, pageId) => {
-  return Page.findOneAndRemove({
-    _id: pageId,
-    website: websiteId
-  }).catch(err => {
+  return Website.findById(websiteId).catch(err => {
+    console.error('[ERROR]: Failed to fetch website. Error:', err)
     return Promise.reject(new HttpError(
       500,
       'UNKNOWN_ERROR',
-      'Failed to delete page'
+      'Failed to fetch website'
     ))
-  }).then(result => {
-    return CompiledPage.findOneAndRemove({
-      page: pageId,
+  }).then(websiteDoc => {
+    return Page.findOneAndRemove({
+      _id: pageId,
       website: websiteId
     }).catch(err => {
+      console.error('[ERROR]: Failed to delete pages. Error:', err)
       return Promise.reject(new HttpError(
         500,
         'UNKNOWN_ERROR',
-        'Failed to delete compiled page'
+        'Failed to delete page'
       ))
+    }).then(result => {
+      return CompiledPage.findOneAndRemove({
+        page: pageId,
+        website: websiteId
+      }).catch(err => {
+        console.error('[ERROR]: Failed to delete compiled page. Error:', err)
+        return Promise.reject(new HttpError(
+          500,
+          'UNKNOWN_ERROR',
+          'Failed to delete compiled page'
+        ))
+      }).then(results => {
+        snippetService.udpatePageMenubarSnippet(websiteDoc).then(() => {
+          console.log(`Updated menubar snippet. Subdomain: ${websiteDoc.get('subdomain')}`)
+        }).catch(err => {
+          console.error('[ERROR]: Failed to update menubar snippet. Error:', err)
+        })
+        return Promise.resolve(results)
+      })
     })
   })
 }
 
 const createHomePage = (websiteDoc) => {
   const label = 'home'
-  console.log('Page label:', label)
   const content = defaultPageContentTemplate({
     pageLabel: label
   })
@@ -160,6 +177,7 @@ const deleteWebsitePages = (websiteDoc) => {
   return Page.remove({
     website: websiteId
   }).catch(err => {
+    console.error('[ERROR]: Failed to delete pages. Error:', err)
     return Promise.reject(new HttpError(
       500,
       'UNKNOWN_ERROR',
@@ -169,6 +187,7 @@ const deleteWebsitePages = (websiteDoc) => {
     return CompiledPage.remove({
       website: websiteId
     }).catch(err => {
+      console.error('[ERROR]: Failed to delete compiled pages. Error:', err)
       return Promise.reject(new HttpError(
         500,
         'UNKNOWN_ERROR',
