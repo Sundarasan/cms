@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const HttpError = require('../helper/http-error')
 const Website = require('../model/website')
 const Page = require('../model/page')
+const websiteHelper = require('../helper/website')
 const CompiledPage = require('../model/compiled-page')
 
 const createWebsite = (website) => {
@@ -18,6 +19,8 @@ const createWebsite = (website) => {
       'UNKNOWN_ERROR',
       'Failed to create website'
     ))
+  }).then(websiteDoc => {
+    return websiteHelper.createDefaultWebsiteEntities(websiteDoc)
   })
 }
 
@@ -50,43 +53,31 @@ const updateWebsite = (websiteId, website) => {
 }
 
 const deleteWebsite = (websiteId) => {
-  return Website.findOneAndRemove({
-    _id: websiteId
-  }).catch(err => {
-    console.error('[ERROR]: Failed to delete website. Error:', err)
+  return Website.findById(websiteId).catch(err => {
+    console.error('[ERROR]: Failed to fetch website. Error:', err)
     return Promise.reject(new HttpError(
       500,
       'UNKNOWN_ERROR',
-      'Failed to delete website'
+      'Failed to fetch website'
     ))
-  }).then(result => {
-    console.log('result:', result)
-    if (!result.n) {
+  }).then(websiteDoc => {
+    if (!websiteDoc) {
       return Promise.reject(new HttpError(
         404,
         'WEBSITE_NOT_FOUND',
-        'Website not found'
+        'Failed to find website'
       ))
     } else {
-      const promiseArray = []
-      return Promise.all([
-        Page.remove({
-          website: websiteId
-        }),
-        CompiledPage.remove({
-          website: websiteId
-        }),
-        Snippet.remove({
-          website: websiteId
+      return websiteHelper.deleteWebsiteEntities(websiteDoc).then(() => {
+        return websiteDoc.remove().catch(err => {
+          console.error('[ERROR]: Failed to delete website. Error:', err)
+          return Promise.reject(new HttpError(
+            500,
+            'UNKNOWN_ERROR',
+            'Failed to delete website'
+          ))  
         })
-      ]).catch(err => {
-        console.error('[ERROR]: Failed to delete website data. Error:', err)
-        return Promise.reject(new HttpError(
-          500,
-          'UNKNOWN_ERROR',
-          'Failed to delete website data'
-        ))
-      })    
+      })
     }
   })
 }

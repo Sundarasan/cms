@@ -9,7 +9,7 @@ router.post('/website/:websiteId/page', (req, res) => {
   pageService.createPage(websiteId, page).then(pageDoc => {
     res.json(pageDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -20,7 +20,7 @@ router.put('/website/:websiteId/page/:pageId', (req, res) => {
   pageService.updatePage(websiteId, pageId, page).then(pageDoc => {
     res.json(pageDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -33,7 +33,7 @@ router.delete('/website/:websiteId/page/:pageId', (req, res) => {
       message: 'Page deleted successfully'
     })
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 

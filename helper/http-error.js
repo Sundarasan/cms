@@ -12,6 +12,8 @@ module.exports = function HttpError (statusCode, type, message, extra) {
   }
   if (_.isNumber(statusCode)) {
     this.statusCode = statusCode
+  } else {
+    this.statusCode = 500
   }
   this.type = type
   this.message = message

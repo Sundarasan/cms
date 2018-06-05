@@ -2,11 +2,9 @@ const express = require('express')
 const router = express.Router()
 const Website = require('../../model/website')
 const Page = require('../../model/page')
-const ejs = require('ejs')
 const rword = require('rword')
 const _ = require('lodash')
-const defaultPageContent = require('../../view/page/static/default-page.html')
-const defaultPageContentTemplate = ejs.compile(defaultPageContent)
+const defaultPageContentTemplate = require('../../helper/default-content').defaultPageContentTemplate
 
 router.get('/website/:subdomain/page', (req, res) => {
   Website.findOne({

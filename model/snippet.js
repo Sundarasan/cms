@@ -19,6 +19,10 @@ var SnippetSchema = new Schema({
     type: String,
     trim: true,
     required: true
+  },
+  isEditable: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true

@@ -1,0 +1,11 @@
+<div class="page-menubar-container">
+
+  <ul class="page-menubar">
+    <% pageDocs.forEach(pageDoc => { %>
+      <li class="page-menu-item">
+        <a href="/<%= pageDoc.get('label') %>" class="page-menu-a"><%= pageDoc.get('label') %></a>
+      </li>
+    <% }) %>
+  </ul>
+  
+</div>

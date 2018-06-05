@@ -9,7 +9,7 @@ router.post('/website/:websiteId/snippet', (req, res) => {
   snippetService.createSnippet(websiteId, snippet).then(snippetDoc => {
     res.json(snippetDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -20,7 +20,7 @@ router.put('/website/:websiteId/snippet/:snippetId', (req, res) => {
   snippetService.updateSnippet(websiteId, snippetId, snippet).then(snippetDoc => {
     res.json(snippetDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -33,7 +33,7 @@ router.delete('/website/:websiteId/snippet/:snippetId', (req, res) => {
       message: 'Snippet deleted successfully'
     })
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 

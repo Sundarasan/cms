@@ -8,7 +8,8 @@ router.post('/website', (req, res) => {
   websiteService.createWebsite(website).then(websiteDoc => {
     res.json(websiteDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    console.error('[ERROR]: Failed to create website. Error:', httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -18,7 +19,7 @@ router.put('/website/:websiteId', (req, res) => {
   websiteService.updateWebsite(websiteId, website).then(websiteDoc => {
     res.json(websiteDoc)
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
@@ -30,7 +31,7 @@ router.delete('/website/:websiteId', (req, res) => {
       message: 'Website deleted successfully'
     })
   }).catch(httpErr => {
-    res.status(httpErr.statusCode).json(httpErr)
+    res.status(httpErr.statusCode || 500).json(httpErr)
   })
 })
 
