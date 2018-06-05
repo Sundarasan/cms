@@ -1,4 +1,5 @@
 
+const Promise = require('bluebird')
 const Website = require('../model/website')
 const Page = require('../model/page')
 const Snippet = require('../model/snippet')

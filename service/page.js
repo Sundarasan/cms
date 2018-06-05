@@ -34,6 +34,14 @@ const createPage = (websiteId, page) => {
           'UNKNOWN_ERROR',
           'Failed to create page'
         ))
+      }).then(pageDoc => {
+        // Defers compile page task
+        compilePageHelper.compilePage(websiteDoc, pageDoc).then(() => {
+          console.log(`Compiled page and stored successfully. Subdomain: ${websiteDoc.get('subdomain')} | Page: ${pageDoc.get('label')}`)
+        }).catch(err => {
+          console.error('[ERROR]: Failed to compile given content. Error:', err)
+        })
+        return Promise.resolve(pageDoc)
       })
     }
   })
@@ -108,6 +116,17 @@ const deletePage = (websiteId, pageId) => {
       'UNKNOWN_ERROR',
       'Failed to delete page'
     ))
+  }).then(result => {
+    return CompiledPage.findOneAndRemove({
+      page: pageId,
+      website: websiteId
+    }).catch(err => {
+      return Promise.reject(new HttpError(
+        500,
+        'UNKNOWN_ERROR',
+        'Failed to delete compiled page'
+      ))
+    })
   })
 }
 
