@@ -69,5 +69,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
+  console.ingo('Environment:', process.env.NODE_ENV)
   console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", addr.port, addr.port)
 }
