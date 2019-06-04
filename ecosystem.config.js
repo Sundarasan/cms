@@ -10,7 +10,8 @@ module.exports = {
       ref: 'origin/master',
       repo: 'git@github.com:Sundarasan/cms.git',
       path: '/home/ubuntu/cms',
-      'post-deploy': 'yarn install && pm2 startOrRestart ecosystem.config.js'
+      'post-deploy': 'yarn install && pm2 startOrRestart ecosystem.config.js',
+      key: '~/.ssh/pem/snsundarasan3gmailcom.pem'
     }
   }
 }
