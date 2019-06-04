@@ -1,5 +1,5 @@
 {
-  "name": "ec2-sample-express",
+  "name": "cms",
   "version": "1.0.0",
   "description": "Sample express application",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sundarasan/ec2-sample-express.git"
+    "url": "git+https://github.com/Sundarasan/cms.git"
   },
   "keywords": [
     "sample",
@@ -18,9 +18,9 @@
   "author": "Sundarasan Natarajan",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Sundarasan/ec2-sample-express/issues"
+    "url": "https://github.com/Sundarasan/cms/issues"
   },
-  "homepage": "https://github.com/Sundarasan/ec2-sample-express#readme",
+  "homepage": "https://github.com/Sundarasan/cms#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
     "compression": "^1.7.2",
