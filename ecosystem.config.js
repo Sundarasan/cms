@@ -6,7 +6,7 @@ module.exports = {
   deploy: {
     production: {
       user: 'ubuntu',
-      host: 'ec2-18-219-254-130.us-east-2.compute.amazonaws.com',
+      host: 'ec2-35-154-248-244.ap-south-1.compute.amazonaws.com',
       ref: 'origin/master',
       repo: 'git@github.com:Sundarasan/cms.git',
       path: '/home/ubuntu/cms',
